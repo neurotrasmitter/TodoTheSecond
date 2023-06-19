@@ -1,0 +1,71 @@
+.red-light {
+    color: #F57089;
+}
+
+.red {
+    color: #F35A76;
+}
+
+.red-dark {
+    color: #F24665;
+}
+
+.primary-light {
+    color: #99A3F0;
+}
+
+.primary {
+    color: #5768E6;
+}
+
+.primary-dark {
+    color: #4053E3;
+}
+
+.black {
+    color: #0A0918;
+}
+
+.grey-1 {
+    color: #23222F;
+}
+
+.grey-2 {
+    color: #3B3A46;
+}
+
+.grey-3 {
+    color: #54535D;
+}
+
+.grey-4 {
+    color: #6C6B74;
+}
+
+.grey-5 {
+    color: #85848C;
+}
+
+.grey-6 {
+    color: #9D9DA3;
+}
+
+.grey-7 {
+    color: #B6B5BA;
+}
+
+.grey-8 {
+    color: #CECED1;
+}
+
+.grey-9 {
+    color: #E7E6E8;
+}
+
+.white {
+    color: #fff;
+}
+
+.icon-gray svg > path{
+    stroke: #9D9DA3;
+}

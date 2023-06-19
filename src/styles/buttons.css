@@ -1,0 +1,23 @@
+.default-button {
+    width: 136px;
+    height: 48px;
+    border-radius: 8px;
+}
+
+.long-button {
+    width: 536px;
+    height: 48px;
+    border-radius: 8px;
+}
+
+.two-button-modal {
+    width: 264px;
+    height: 48px;
+    border-radius: 8px;
+}
+
+.back-button {
+    width: 278px;
+    height: 48px;
+    border-radius: 8px;
+}

@@ -1,0 +1,19 @@
+.hover-icon:hover .red-icon > path{
+    stroke: #F35A76;
+}
+
+.hover-icon:hover .primary-icon > path {
+    stroke: #5768E6;
+}
+
+.hover-icon:hover .white-icon > path {
+    stroke: #FFFFFF;
+}
+
+.hover-icon-fill:hover .white-icon > path {
+    fill: #FFFFFF;
+}
+
+.hover-icon-fill:hover .red-icon > path{
+    fill: #F35A76;
+}

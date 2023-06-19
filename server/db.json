@@ -1,0 +1,96 @@
+{
+  "users": [
+    {
+      "id": 0,
+      "name": "piska_struy@orel.57",
+      "password": "12345"
+    },
+    {
+      "id": 1,
+      "name": "cachan@orel.57",
+      "password": "1234"
+    }
+  ],
+  "groups": [
+    {
+      "id": 0,
+      "userId": 0,
+      "name": "Дом",
+      "path": "/home"
+    },
+    {
+      "id": 1,
+      "userId": 1,
+      "name": "Дом",
+      "path": "/home"
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "name": "Работа",
+      "path": "/work"
+    },
+    {
+      "id": "7fNyGwgPDQmlwZe_NxHVH",
+      "userId": 1,
+      "name": "Семья",
+      "path": "/family"
+    },
+    {
+      "id": "loyxKrCSJO_tVWIUm5wJ8",
+      "userId": 1,
+      "name": "Машино",
+      "path": "/masha"
+    }
+  ],
+  "records": [
+    {
+      "userId": 1,
+      "groupId": 1,
+      "id": "07_8apE9toOecSt9G9K7t",
+      "text": "Кофе",
+      "checked": false,
+      "completionTime": ""
+    },
+    {
+      "userId": 1,
+      "groupId": 1,
+      "id": "_xDiq8SbVXhlq3ibC78mg",
+      "text": "Отжумания частной собственности на средства производства",
+      "checked": false,
+      "completionTime": ""
+    },
+    {
+      "userId": 1,
+      "groupId": "loyxKrCSJO_tVWIUm5wJ8",
+      "id": "sZgKXwifAjiSTIRHU0ZoF",
+      "text": "Читать тестирование",
+      "checked": false,
+      "completionTime": ""
+    },
+    {
+      "userId": 1,
+      "groupId": "loyxKrCSJO_tVWIUm5wJ8",
+      "id": "FVz39QN7GSE2l7WLUD3ak",
+      "text": "ewqeqw",
+      "checked": false,
+      "completionTime": ""
+    },
+    {
+      "userId": 1,
+      "groupId": "loyxKrCSJO_tVWIUm5wJ8",
+      "id": "o4mGXouxL0uvPDuYoSXVs",
+      "text": "321",
+      "checked": false,
+      "completionTime": ""
+    },
+    {
+      "userId": 1,
+      "groupId": "loyxKrCSJO_tVWIUm5wJ8",
+      "id": "TjAYbVyaVbxSWFgYMimrt",
+      "text": "3213123",
+      "checked": false,
+      "completionTime": ""
+    }
+  ]
+}
