@@ -1,19 +1,31 @@
 <template>
   <div class="main-container">
     <h1 class="not-found not-found-text grey-4">404</h1>
-    <h2 class="text header-2 black">Страница не найдена</h2>
+    <h2 class="text header-2 black">{{ $t("pageNoFoundLocalText") }}</h2>
     <button class="back-button bg-primary white text-18" @click="back">
-      Вернуться в список задач
+      {{ $t("action.goBackAction") }}
     </button>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "NotFoundView",
+  computed: {
+    ...mapState(["groups"]),
+  },
   methods: {
     back() {
-      this.$router.back();
+      if (this.groups.length) {
+        this.$router.push({
+          name: "todoBoard",
+          params: { path: this.groups[0].path },
+        });
+      } else {
+        this.$router.push({ name: "createBoard" });
+      }
     },
   },
 };
@@ -28,10 +40,10 @@ export default {
 }
 .not-found {
   margin-top: 200px;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 .text {
-  margin-top: 0px;
+  margin-top: 0;
   margin-bottom: 40px;
 }
 </style>

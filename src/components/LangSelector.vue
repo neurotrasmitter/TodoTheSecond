@@ -1,18 +1,22 @@
 <template>
-  <div class="main-container-selector">
+  <div class="main-container-selector" @blur="isOpen = false" tabindex="0">
     <div class="info">
-      <div @click="changeState">
-        {{ shortenLang }} <CaretUpIcon v-if="isOpen" /> <CaretDownIcon v-else />
+      <div
+        @click="changeState"
+        class="hover-icon"
+        :class="{ 'icon-primary': isOpen }"
+      >
+        {{ language }} <CaretUpIcon v-if="isOpen" /> <CaretDownIcon v-else />
       </div>
     </div>
     <div class="lang-selector bg-white" v-show="isOpen">
-      <ul>
+      <ul class="list">
         <li
           v-for="(lang, index) of languageArray"
           :key="index"
           @click="selectLang(lang)"
         >
-          {{ lang }}
+          <div class="text">{{ lang }}</div>
         </li>
       </ul>
     </div>
@@ -22,6 +26,8 @@
 <script>
 import CaretUpIcon from "@/components/icons/CaretUpIcon";
 import CaretDownIcon from "@/components/icons/CaretDownIcon";
+import { mapMutations, mapState } from "vuex";
+import i18n from "@/i18n";
 export default {
   name: "LangSelector",
   components: { CaretDownIcon, CaretUpIcon },
@@ -33,17 +39,30 @@ export default {
     };
   },
   computed: {
+    ...mapState(["language"]),
     shortenLang() {
       return this.currentLang.substring(0, 3);
     },
   },
   methods: {
+    ...mapMutations(["changeLanguage"]),
     changeState() {
       this.isOpen = !this.isOpen;
     },
     selectLang(lang) {
+      console.log("argument", lang);
       this.currentLang = lang;
+      console.log("currentLang", this.currentLang);
+      console.log("shortenLang", this.shortenLang);
+      this.changeLanguage({ language: this.shortenLang });
+      if (this.shortenLang === "Рус") {
+        i18n.locale = "ru";
+      } else {
+        i18n.locale = "en";
+      }
+
       this.changeState();
+      console.log(this.language);
     },
   },
 };
@@ -64,6 +83,13 @@ export default {
   justify-content: right;
   align-items: center;
   text-align: left;
+}
+.text:hover {
+  color: #5768e6;
+}
+.list {
+  margin-top: 16px;
+  margin-bottom: 16px;
 }
 li {
   padding-left: 24px;

@@ -1,29 +1,32 @@
 <template>
   <div class="container bg">
     <div class="main-window bg-white">
-      <h1 class="header header-1">Авторизация в системе</h1>
+      <h1 class="header header-1">{{ $t("auth.authorisationTitle") }}</h1>
       <div class="login-fields">
         <LabelInputForm
-          label="Логин"
+          :label="$t('auth.login')"
           id="login"
           :error-text="errorLoginText"
           v-model="login"
           class="login-label"
+          @enter="loginMethod"
         />
         <LabelInputForm
-          label="Пароль"
+          :label="$t('auth.password')"
           id="password"
           type="password"
           :error-text="errorPasswordText"
           v-model="password"
           class="password-label"
+          @enter="loginCheck"
         />
       </div>
       <button
         class="enter-button long-button bg-primary white text-18"
         @click="loginMethod"
+        :disabled="!isCorrect"
       >
-        Войти
+        {{ $t("action.loginAction") }}
       </button>
       <LangSelector class="lang-selector-dropdown" />
     </div>
@@ -52,23 +55,26 @@ export default {
     ...mapState(["userId", "userName"]),
     errorLoginText() {
       if (!this.login) {
-        return "*Поле не должно быть пустым";
+        return this.$t("error.fieldIsEmpty");
       } else if (!this.login.match(/.+@.+\..+/)) {
-        return "*Введите адрес электронной почты";
+        return this.$t("error.isNotEmail");
       } else if (this.incorrectLogin) {
-        return "*Неверный логин или пароль";
+        return this.$t("error.loginOrPasswordIncorrect");
       } else {
         return "";
       }
     },
     errorPasswordText() {
       if (this.password.length < 4) {
-        return "*Пароль должен быть не менее 4 символов";
+        return this.$t("error.passwordIsToShort");
       } else if (this.incorrectLogin) {
-        return "*Неверный логин или пароль";
+        return this.$t("error.loginOrPasswordIncorrect");
       } else {
         return "";
       }
+    },
+    isCorrect() {
+      return !this.errorLoginText && !this.errorPasswordText;
     },
   },
   watch: {
@@ -82,14 +88,14 @@ export default {
   methods: {
     ...mapActions(["setUserInfoAction"]),
     async loginCheck() {
-      const payload = { login: this.login, password: this.password };
-      const { data } = await axios.get("http://localhost:3000/users", {
-        params: payload,
+      const { data } = await axios.get("http://localhost:3004/users", {
+        params: { name: this.login },
       });
-      if (data.length !== 1) {
-        throw new Error("loginCheck: incorrect login");
+      if (data.length && data[0].password === this.password) {
+        return data[0];
+      } else {
+        throw new Error("Incorrect login or password");
       }
-      return data[0];
     },
     async loginMethod() {
       let result = {};
@@ -97,12 +103,14 @@ export default {
         try {
           result = await this.loginCheck();
           this.setUserInfoAction({ id: result.id, name: result.name });
-          this.$emit("successfulLogin");
+          window.localStorage.setItem("userId", result.id);
+          window.localStorage.setItem("userName", result.name);
+          this.$router.push({ name: "board", params: { isLogin: true } });
         } catch (e) {
           this.incorrectLogin = true;
         }
       } else {
-        console.log("somthing wrong");
+        console.log("something wrong");
       }
     },
   },

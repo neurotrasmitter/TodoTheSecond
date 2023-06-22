@@ -1,66 +1,100 @@
 <template>
   <div class="nav-bar bg-black">
-    <GroupWorkingModal
-      v-if="showCreateGroup"
-      @confirm-method="addNewRoute"
-      @close-method="switchGroupCreationMode"
-    />
-    <GroupWorkingModal
-      v-if="showEditGroup"
-      :name="editingGroup.name"
-      :path="editingGroup.path"
-      :is-edit="showEditGroup"
-      @confirm-method="changeExistingRoute"
-      @close-method="switchGroupEditionMode"
-    />
-    <div class="navigation-header text-small-12 grey-9">Группы задач</div>
-    <ul class="navigation-list">
-      <li v-for="group of groups" :key="group.id" class="route-text">
-        <router-link :to="group.path" class="text-18 white"
-          >{{ group.name }}
-        </router-link>
-        <div class="button-group">
-          <button
-            class="button-nav hover-icon-fill bg-black"
-            @click="switchGroupEditionMode(group)"
-          >
-            <PenSmallIcon class="hover-icon" />
-          </button>
-          <button
-            class="button-nav bg-black hover-icon-fill"
-            @click="logRouter"
-          >
-            <TrashSmallIcon />
-          </button>
-        </div>
-      </li>
-    </ul>
-    <button
-      class="button-add-group text-14 grey-7 bg-black"
-      @click="switchGroupCreationMode"
-    >
-      <PlusIcon />Добавить группу
-    </button>
+    <div v-if="groups.length">
+      <GroupWorkingModal
+        v-if="showCreateGroup"
+        class="modal"
+        @confirm-method="addNewRoute"
+        @close-method="switchGroupCreationMode"
+      />
+      <GroupWorkingModal
+        v-if="showEditGroup"
+        class="modal"
+        :name="editingGroup.name"
+        :path="editingGroup.path"
+        :is-edit="showEditGroup"
+        @confirm-method="changeExistingRoute"
+        @close-method="switchGroupEditionMode"
+      />
+      <RemoveWorkingModal
+        v-if="showDeleteGroup"
+        class="modal"
+        :storage-name="editingGroup.name"
+        :is-remove-group="true"
+        @confirm-delete="deleteExistingGroup"
+        @cancel-delete="switchGroupDeleteMode"
+      />
+      <div class="navigation-header text-small-12 grey-9">
+        {{ $t("group.groupOfTaskTitle") }}
+      </div>
+      <ul class="navigation-list">
+        <li
+          v-for="group of groups"
+          :key="group.id"
+          :class="{
+            activeClass: group.path === currenPath,
+          }"
+        >
+          <router-link :to="{ name: 'todoBoard', params: { path: group.path } }"
+            ><div
+              class="route-text text-18"
+              :class="{ primary: group.path === currenPath }"
+              @mouseover="hoverButton(group)"
+              @mouseleave="hoveredButton = ''"
+            >
+              {{ group.name }}
+              <div class="button-group" v-if="group.path === hoveredButton">
+                <button
+                  :title="$t('title.edit')"
+                  class="button-nav hover-icon-fill bg-black"
+                  @click.prevent="switchGroupEditionMode(group)"
+                >
+                  <PenSmallIcon class="hover-icon" />
+                </button>
+                <button
+                  :title="$t('title.delete')"
+                  class="button-nav bg-black hover-icon-fill"
+                  @click.prevent="switchGroupDeleteMode(group)"
+                >
+                  <TrashSmallIcon />
+                </button>
+              </div>
+            </div>
+          </router-link>
+        </li>
+      </ul>
+      <button
+        class="button-add-group text-14 grey-7 bg-black"
+        @click="switchGroupCreationMode"
+      >
+        <PlusIcon />
+        {{ $t("group.addNewGroup") }}
+      </button>
+    </div>
+    <div class="navigation-header text-small-12 grey-9" v-else>
+      {{ $t("group.noGroupNavBar") }}
+    </div>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex";
-import { nanoid } from "nanoid";
 
 import GroupWorkingModal from "@/components/modal/GroupWorkingModal";
 
 import PlusIcon from "@/components/icons/PlusIcon";
-import PenSmallIcon from "@/components/icons/PenSmallIcon";
-import TrashSmallIcon from "@/components/icons/TrashSmallIcon";
 
-import getGroupIndex from "@/helpers/getGroupIndex";
+import TrashSmallIcon from "@/components/icons/TrashSmallIcon.vue";
+import PenSmallIcon from "@/components/icons/PenSmallIcon.vue";
+import { nanoid } from "nanoid";
+import RemoveWorkingModal from "@/components/modal/RemoveWorkingModal.vue";
 
 export default {
   name: "NavBar",
   components: {
-    TrashSmallIcon,
+    RemoveWorkingModal,
     PenSmallIcon,
+    TrashSmallIcon,
     PlusIcon,
     GroupWorkingModal,
   },
@@ -68,36 +102,23 @@ export default {
     return {
       showCreateGroup: false,
       showEditGroup: false,
+      showDeleteGroup: false,
       editingGroup: undefined,
+      hoveredButton: "",
     };
   },
   computed: {
     ...mapState(["groups"]),
+    currenPath() {
+      return this.$route.params.path;
+    },
   },
   methods: {
-    ...mapActions(["addNewGroupAction", "changeExistingGroupAction"]),
-    addNewRoute(event) {
-      this.$router.addRoute({
-        path: event.path,
-        name: event.name,
-        component: () => import("@/views/TodoBoardView"),
-      });
-      const group = {
-        id: nanoid(),
-        path: event.path,
-        name: event.name,
-      };
-      this.addNewGroupAction(group);
-      this.switchGroupCreationMode();
-    },
-    changeExistingRoute(event) {
-      const routes = this.$router.getRoutes();
-      const index = getGroupIndex(routes, event.path);
-      routes[index].path = event.path;
-      routes[index].name = event.name;
-      this.changeExistingGroupAction({ path: event.path, name: event.name });
-      this.switchGroupEditionMode();
-    },
+    ...mapActions([
+      "addNewGroupAction",
+      "changeExistingGroupAction",
+      "deleteExistingGroupAction",
+    ]),
     switchGroupCreationMode() {
       this.showCreateGroup = !this.showCreateGroup;
     },
@@ -105,13 +126,48 @@ export default {
       this.showEditGroup = !this.showEditGroup;
       this.editingGroup = group;
     },
-    logRouter() {
-      console.log(this.$router.getRoutes());
-      for (let route of this.$router.getRoutes()) {
-        console.log(route);
+    switchGroupDeleteMode(group = undefined) {
+      this.showDeleteGroup = !this.showDeleteGroup;
+      this.editingGroup = group;
+    },
+    addNewRoute(event) {
+      const route = {
+        id: nanoid(),
+        name: event.name,
+        path: event.newPath,
+      };
+      this.addNewGroupAction(route);
+      this.switchGroupCreationMode();
+    },
+    changeExistingRoute(event) {
+      this.changeExistingGroupAction({
+        name: event.name,
+        oldPath: event.oldPath,
+        newPath: event.newPath,
+        id: this.editingGroup.id,
+      });
+      this.switchGroupEditionMode();
+    },
+    async deleteExistingGroup() {
+      await this.deleteExistingGroupAction({
+        path: this.editingGroup.path,
+        id: this.editingGroup.id,
+      });
+      console.log(this.groups);
+      console.log("groupLength", this.groups.length);
+      if (!this.groups.length) {
+        this.$router.push({ name: "createBoard" });
       }
-      console.log("Working");
-      console.log(getGroupIndex(this.$router.getRoutes(), this.$route.path));
+      if (this.editingGroup.path === this.currenPath) {
+        this.$router.push({
+          name: "todoBoard",
+          params: { path: this.groups[0].path },
+        });
+      }
+      this.switchGroupDeleteMode();
+    },
+    hoverButton(group) {
+      this.hoveredButton = group.path;
     },
   },
 };
@@ -126,25 +182,37 @@ export default {
 }
 .navigation-list {
   margin-top: 32px;
-  margin-left: 28px;
+  margin-left: 24px;
 }
 .route-text {
   margin-top: 16px;
   margin-bottom: 16px;
   margin-right: 16px;
-  width: calc(100% - 16px);
+  width: calc(100% - 24px);
   display: flex;
   justify-content: space-between;
 }
 .navigation-header {
   margin-top: 32px;
-  margin-left: 28px;
+  margin-left: 24px;
+  margin-right: 20px;
 }
 
 .button-add-group {
   margin-top: 24px;
   margin-left: 28px;
 }
-.button-nav {
+.activeClass {
+  padding-left: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg width='16' height='3' viewBox='0 0 16 3' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect y='0.5' width='16' height='2' rx='1' fill='%235768E6'/%3E%3C/svg%3E%0A");
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+.modal {
+  margin-top: -32px;
+  padding-left: 112px;
+}
+.button-group {
+  display: flex;
 }
 </style>

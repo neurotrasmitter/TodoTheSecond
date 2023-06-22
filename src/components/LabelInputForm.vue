@@ -3,17 +3,19 @@
     <label :for="id" class="label text-14">{{ label }}</label>
     <input
       :type="type"
-      :id="id"
       :value="value"
       @input="$emit('input', $event.target.value)"
       class="input input-form text-18"
       :class="{
         'primary header-1': type === 'password',
-        'error-border': isError,
+        'error-border': textOfError,
       }"
+      @keydown.enter="$emit('enter')"
+      @focus="isFocused = true"
+      @blur="isFocused = false"
     />
     <div class="error-text text-small-12 red" v-if="isError">
-      {{ errorText }}
+      {{ textOfError }}
     </div>
   </div>
 </template>
@@ -49,6 +51,18 @@ export default {
     isError() {
       return this.errorText.length;
     },
+    textOfError() {
+      if (this.isFocused && this.errorText) {
+        return this.errorText;
+      } else {
+        return "";
+      }
+    },
+  },
+  data() {
+    return {
+      isFocused: false,
+    };
   },
 };
 </script>

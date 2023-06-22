@@ -1,36 +1,57 @@
 <template>
   <div class="container bg">
-    <RemoveTaskModal
-      class="modal"
-      v-if="isRemoveTaskShow"
+    <RemoveWorkingModal
       :record-name="recordOnDelete.text"
-      :storage-name="$route.name"
+      :storage-name="$route.params.path"
       @cancel-delete="switchDeleteModal"
       @confirm-delete="deleteRecord"
+      class="modal"
+      v-if="isRemoveTaskShow"
     />
-    <div class="ongoing-records-label text-small-14 black">Сделать</div>
-    <div class="task-input new-task-form bg-white">
+    <div class="ongoing-records-label text-small-14 black">
+      {{ $t("task.ongoingTask") }}
+    </div>
+    <div
+      class="task-input new-task-form bg-white"
+      :class="{
+        'input-form-has-error': inputFocused && !inputTaskText.length,
+        'input-form-has-focus': inputFocused,
+      }"
+    >
       <input
-        type="text"
         v-model="inputTaskText"
+        type="text"
+        id="input"
+        minlength="1"
+        maxlength="100"
+        :placeholder="$t('task.placeholderTask')"
         class="input-task-text text-18"
         @keydown.enter="createTodoRecord"
+        @focus="inputFocused = true"
+        @blur="inputFocused = false"
       />
       <button
+        :disabled="!inputTaskText.length"
         class="button default-button bg-primary white"
         @click="createTodoRecord"
       >
-        Добавить
+        {{ $t("action.addAction") }}
       </button>
+    </div>
+    <label for="input" class="error-text text-14 red">{{
+      inputTaskTextError
+    }}</label>
+    <div class="no-task-header header-2" v-if="!recordsList.length">
+      {{ $t("task.noTask") }}
     </div>
     <ul>
       <li v-for="record in ongoingRecords" :key="record.id">
         <TodoRecord
-          class="record"
           :record="record"
           @change-text="changeRecordText(record, $event)"
           @change-status="changeRecordStatus(record)"
           @delete-record="switchDeleteModal(record)"
+          class="record"
         />
       </li>
     </ul>
@@ -38,20 +59,19 @@
       class="completed-records-label text-small-14 black"
       v-if="completedRecords.length"
     >
-      ЗАВЕРШЕНО
+      {{ $t("task.completedTask") }}
     </div>
     <ul>
       <li v-for="record in completedRecords" :key="record.id">
         <TodoRecord
-          class="record"
           :record="record"
           @change-text="changeRecordText(record, $event)"
           @change-status="changeRecordStatus(record)"
           @delete-record="switchDeleteModal(record)"
+          class="record"
         />
       </li>
     </ul>
-    <p>{{ $route.name }}</p>
   </div>
 </template>
 
@@ -60,17 +80,11 @@ import { nanoid } from "nanoid";
 import { mapState, mapActions } from "vuex";
 import TodoRecord from "@/components/TodoRecord";
 import getGroupId from "@/helpers/getGroupId";
-import RemoveTaskModal from "@/components/modal/RemoveTaskModal";
+import RemoveWorkingModal from "@/components/modal/RemoveWorkingModal.vue";
 
 export default {
   name: "TodoBoard",
-  components: { RemoveTaskModal, TodoRecord },
-  props: {
-    storage: {
-      type: String,
-      required: true,
-    },
-  },
+  components: { RemoveWorkingModal, TodoRecord },
   data() {
     return {
       inputHasFocused: false,
@@ -78,20 +92,32 @@ export default {
       inputTaskText: "",
       isRemoveTaskShow: false,
       recordOnDelete: undefined,
+      inputFocused: false,
+      storage: this.$route.params.path,
     };
   },
   computed: {
     ...mapState(["userName", "userId", "groups", "records"]),
     recordsList() {
       console.log(`storage ${this.storage}`);
-      return this.records[this.storage];
+      return this.records[this.storage] ? this.records[this.storage] : [];
     },
     ongoingRecords() {
-      console.log(this.recordsList);
-      return this.recordsList.filter((el) => !el.checked);
+      return this.recordsList
+        ? this.recordsList.filter((el) => !el.checked)
+        : [];
     },
     completedRecords() {
-      return this.recordsList.filter((el) => el.checked);
+      return this.recordsList
+        ? this.recordsList.filter((el) => el.checked)
+        : [];
+    },
+    inputTaskTextError() {
+      if (!this.inputTaskText.length && this.inputFocused) {
+        return this.$t("error.newTaskIsEmpty");
+      } else {
+        return "";
+      }
     },
   },
   methods: {
@@ -102,9 +128,8 @@ export default {
       "deleteRecordAction",
     ]),
     createTodoRecord() {
-      if (!this.inputTaskText) {
-        this.inputHasError = true;
-      } else {
+      console.log(this.$route);
+      if (this.inputTaskText.length) {
         this.addNewRecordAction({
           record: {
             userId: this.userId,
@@ -139,10 +164,23 @@ export default {
       this.switchDeleteModal();
     },
   },
+  watch: {
+    $route(to) {
+      this.storage = to.params.path;
+    },
+  },
 };
 </script>
 
 <style scoped>
+.no-task-header {
+  text-align: center;
+  margin-top: 32px;
+}
+
+.container {
+  min-height: calc(100vh - 75px);
+}
 .ongoing-records-label {
   margin-top: calc(54px - 84px);
   margin-left: 80px;
@@ -161,6 +199,7 @@ export default {
 }
 
 .input-task-text {
+  padding-left: 24px;
   width: 100%;
 }
 
@@ -169,7 +208,12 @@ export default {
 }
 
 .record {
+  min-height: 56px;
   margin: 8px 80px;
+}
+
+.record:last-child {
+  margin-bottom: 0;
 }
 
 .modal {
@@ -178,7 +222,8 @@ export default {
 }
 
 .error-text {
-  margin-left: 80px;
+  margin-top: 8px;
+  margin-left: 86px;
 }
 
 .input-form-has-focus {

@@ -1,26 +1,87 @@
 <template>
   <div class="container bg">
-    <h1 class="header header-1">
-      У вас не создано ни одной группы.<br />
-      Добавьте группу задач, заполнив форму
-    </h1>
+    <div class="header header-1">
+      {{ $t("group.noGroupTitleUpper") }}
+    </div>
+    <div class="header-1">
+      {{ $t("group.noGroupTitleDowner") }}
+    </div>
     <LabelInputForm
-      label="Название групы"
+      v-model="groupName"
+      :label="$t('group.groutName')"
       id="group-name"
+      :error-text="groupNameErrorText"
       class="group-name-input"
+      @enter="addNewGroup"
     />
-    <LabelInputForm label="Путь" id="path" class="path-input" />
-    <button class="button long-button bg-primary white text-18">
-      Добавить
+    <LabelInputForm
+      v-model="groupPath"
+      :label="$t('group.groupPath')"
+      id="path"
+      :error-text="groupPathErrorText"
+      class="path-input"
+      @enter="addNewGroup"
+    />
+    <button
+      class="button long-button bg-primary white text-18"
+      @click="addNewGroup"
+      :disabled="!isCorrect"
+    >
+      {{ $t("action.addAction") }}
     </button>
   </div>
 </template>
 
 <script>
 import LabelInputForm from "@/components/LabelInputForm";
+import { mapActions } from "vuex";
+import { nanoid } from "nanoid";
 export default {
-  name: "NoRecords",
+  name: "NoGroups",
   components: { LabelInputForm },
+  data() {
+    return {
+      groupName: "",
+      groupPath: "",
+    };
+  },
+  computed: {
+    groupNameErrorText() {
+      if (!this.groupName) {
+        return this.$t("error.fieldIsEmpty");
+      } else {
+        return "";
+      }
+    },
+    groupPathErrorText() {
+      if (!this.groupPath) {
+        return this.$t("error.fieldIsEmpty");
+      } else {
+        return "";
+      }
+    },
+    isCorrect() {
+      return !this.groupPathErrorText.length && !this.groupNameErrorText.length;
+    },
+  },
+  methods: {
+    ...mapActions(["addNewGroupAction"]),
+    addNewGroup() {
+      if (this.isCorrect) {
+        this.addNewGroupAction({
+          id: nanoid(),
+          name: this.groupName,
+          path: this.groupPath,
+        });
+        this.$router.push({
+          name: "todoBoard",
+          params: { path: this.groupPath },
+        });
+      } else {
+        console.log("error adding group");
+      }
+    },
+  },
 };
 </script>
 

@@ -1,0 +1,59 @@
+{
+  "pageNoFoundLocalText": "Страница не найдена",
+  "warning": {
+    "removeTask": "Восстановление данных удаленной задачи невозможно.",
+    "removeGroup": "Восстановление данных удаленного хранилища невозможно."
+  },
+  "title": {
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "confirm": "Подтвердить",
+    "signOut": "Смена пользователя"
+  },
+  "action": {
+    "cancelAction": "Отмена",
+    "deleteAction": "Удалить",
+    "loginAction": "Войти",
+    "addAction": "Добавить",
+    "changeAction": "Редактировать",
+    "goBackAction": "Вернуться в список задач"
+  },
+  "error": {
+    "newTaskIsEmpty": "*Нельзя добавить задачу без описания. Пожалуйста, введите текст задачи",
+    "fieldIsEmpty": "*Поле не должно быть пустым",
+    "isNotEmail": "*Введите адрес электронной почты",
+    "loginOrPasswordIncorrect": "*Неверный логин или пароль",
+    "passwordIsToShort": "*Пароль должен быть не менее 4 символов",
+    "groupNameIsEmpty": "*Имя группы не должно быть пустым",
+    "groupPathIsEmpty": "*Путь группы не должен быть пустым",
+    "changeRecordValueToEmpty": "*Нельзя изменить значение на пустое"
+  },
+  "group": {
+    "noGroupNavBar": "Здесь отображаются группы задач",
+    "groutName": "Название группы",
+    "noGroupTitleUpper": "У вас не создано ни одной группы.",
+    "noGroupTitleDowner": "Добавьте группу задач, заполнив форму",
+    "groupOfTaskTitle": "Группы задач",
+    "addNewGroup": "Добавить группу",
+    "groupPath": "Путь"
+  },
+  "task": {
+    "noTask": "Нет задач",
+    "ongoingTask": "Сделать",
+    "completedTask": "Завершено",
+    "placeholderTask": "Введите текст задачи",
+    "closedTask": "Закрыто"
+  },
+  "auth": {
+    "authorisationTitle": "Авторизация в системе",
+    "login": "Логин",
+    "password": "Пароль"
+  },
+  "modal": {
+    "removeGroutTitle": "Удаление группы задач",
+    "removeTask": "Вы уверены, что хотите удалить задачу “{recordName}” из Группы задач \"{storageName}\"?",
+    "editingGroupTitle": "Редактирование Группы Задач {name}",
+    "removeGroupTitle": "Удаление Группы Задач \"{storageName}\"",
+    "removeGroup": "Вы действительно хотите удалить Группу Задач \"{storageName}\""
+  }
+}

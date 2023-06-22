@@ -18,6 +18,9 @@
     color: #5768E6;
 }
 
+.primary{
+}
+
 .primary-dark {
     color: #4053E3;
 }
@@ -68,4 +71,7 @@
 
 .icon-gray svg > path{
     stroke: #9D9DA3;
+}
+.icon-primary svg > path {
+    stroke: #5768E6;
 }

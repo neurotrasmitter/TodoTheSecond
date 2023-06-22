@@ -21,3 +21,19 @@
     height: 48px;
     border-radius: 8px;
 }
+
+.button-color-white {
+    background-color: white;
+}
+.button-color-white:hover {
+    background-color: #E7E6E8;
+}
+.button-color-white:disabled {
+    color: #B6B5BA;
+}
+.small-button-color-white {
+    color: #54535D
+}
+.small-button-color-white:hover {
+    color: #0A0918;
+}

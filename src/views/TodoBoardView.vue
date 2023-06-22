@@ -4,11 +4,15 @@
     <div class="todo-board-header">
       <LangSelector class="header-text" />
       <div class="user-name header-text">{{ userName }}</div>
-      <button class="logout-button bg" @click="logOutMethod">
+      <button
+        :title="$t('title.signOut')"
+        class="logout-button bg hover-icon"
+        @click="logOutMethod"
+      >
         <SignOutIcon />
       </button>
     </div>
-    <TodoBoard class="main-container" :storage="storageName" />
+    <router-view class="main-container" />
   </div>
 </template>
 
@@ -16,33 +20,114 @@
 import LangSelector from "@/components/LangSelector";
 import SignOutIcon from "@/components/icons/SignOutIcon";
 import NavBar from "@/components/NavBar";
-import TodoBoard from "@/components/TodoBoard";
 
 import { mapMutations, mapState } from "vuex";
+import axios from "axios";
+import doesTheGroupPathNotExist from "@/helpers/doesTheGroupPathNotExist";
 
 export default {
   name: "TodoBoardView",
-  components: { TodoBoard, NavBar, SignOutIcon, LangSelector },
-  data() {
-    return {
-      storageName: this.$route.path.slice(1),
-    };
-  },
+  components: { NavBar, SignOutIcon, LangSelector },
   computed: {
-    ...mapState(["userName"]),
+    ...mapState(["userName", "userId", "groups"]),
   },
   methods: {
-    ...mapMutations(["resetUserInfoMutation"]),
+    ...mapMutations([
+      "resetUserInfoMutation",
+      "setGroupsMutation",
+      "setRecordsMutation",
+      "setUserNameMutation",
+    ]),
     logOutMethod() {
-      console.log("1");
-      this.$router.push("login");
+      this.$router.push("/login");
       this.resetUserInfoMutation();
+      window.localStorage.removeItem("userId");
+    },
+    async start() {
+      await this.getDataFromServer();
+      if (this.groups.length) {
+        this.$router.push({
+          name: "todoBoard",
+          params: {
+            path: this.groups[0].path,
+          },
+        });
+      } else {
+        this.$router.push({ name: "createBoard" });
+      }
+    },
+    async getDataFromServer() {
+      let groups = [];
+      let records = {};
+      try {
+        groups = await this.getGroupsFromServer();
+        for (let group of groups) {
+          records[group.path] = [];
+        }
+        this.setGroupsMutation({ groups });
+        let result = await this.getRecordsFromServer();
+        for (let record of result) {
+          for (let group of groups) {
+            if (record.groupId === group.id) {
+              records[group.path].push(record);
+            }
+          }
+        }
+        this.setRecordsMutation({ records });
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    async getGroupsFromServer() {
+      return (
+        await axios.get("http://localhost:3004/groups", {
+          params: {
+            userId: this.userId,
+          },
+        })
+      )?.data;
+    },
+    async getRecordsFromServer() {
+      return (
+        await axios.get("http://localhost:3004/records", {
+          params: {
+            userId: this.userId,
+          },
+        })
+      )?.data;
     },
   },
-  watch: {
-    $route(to) {
-      this.storageName = to.path.slice(1);
-    },
+
+  async created() {
+    if (this.userId && this.$route.params.isLogin) {
+      await this.start();
+    } else if (this.userId) {
+      const { data } = await axios.get("http://localhost:3004/users", {
+        params: { id: this.userId },
+      });
+      console.log(data.length);
+      if (data.length) {
+        console.log("if_statement");
+        this.setUserNameMutation({ name: data[0].name });
+        await this.getDataFromServer();
+        if (
+          this.$route.name === "todoBoard" &&
+          doesTheGroupPathNotExist(this.groups, this.$route.params.path)
+        ) {
+          this.$router.push({ name: "404" });
+        } else if (this.$route.name === "createBoard" && this.groups.length) {
+          this.$router.push({
+            name: "todoBoard",
+            params: {
+              path: this.groups[0].path,
+            },
+          });
+        }
+      } else {
+        console.log("else_statement");
+        this.$router.push({ name: "Login" });
+      }
+    }
   },
 };
 </script>

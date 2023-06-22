@@ -1,0 +1,29 @@
+{
+  "users": [
+    {
+      "id": 2,
+      "name": "piska_struy@orel.57",
+      "password": "12345"
+    },
+    {
+      "id": 1,
+      "name": "cachan@orel.57",
+      "password": "1234"
+    }
+  ],
+  "groups": [
+    {
+      "id": 0,
+      "userId": 2,
+      "name": "Дом",
+      "path": "home"
+    },
+    {
+      "id": "pJ9PscmZsWzDZm-qI35bN",
+      "userId": "1",
+      "name": "1321",
+      "path": "312312"
+    }
+  ],
+  "records": []
+}

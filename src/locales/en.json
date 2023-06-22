@@ -1,0 +1,59 @@
+{
+  "pageNoFound": "Page not found",
+  "waning": {
+    "removeTask": "Recovery of deleted task data is not possible.",
+    "removeGroup": "It is not possible to restore remote group data."
+  },
+  "title": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "signOut": "Log out"
+  },
+  "action": {
+    "cancelAction": "Cancel",
+    "deleteAction": "Delete",
+    "loginAction": "Login",
+    "addAction": "Add",
+    "changeAction": "Edit",
+    "goBackAction": "Back to the task list"
+  },
+  "error": {
+    "newTaskIsEmpty": "*You cannot add a problem without a description. Please enter the text of the task",
+    "fieldIsEmpty": "*The field must not be empty",
+    "isNotEmail": "*Please enter your email address",
+    "loginOrPasswordIncorrect": "*Incorrect login or password",
+    "passwordIsToShort": "*Password must be at least 4 characters long",
+    "groupNameIsEmpty": "*The group name must not be empty",
+    "groupPathIsEmpty": "*The path of the group should not be empty",
+    "changeRecordValueToEmpty": "*Can't change the value to blank"
+  },
+  "group": {
+    "noGroupNavBar": "Task groups are displayed here",
+    "groutName": "Group name",
+    "noGroupTitleUpper": "You do not have any groups created.",
+    "noGroupTitleDowner": "Add a task group by filling out the form",
+    "groupOfTaskTitle": "Task groups",
+    "addNewGroup": "Add group",
+    "removeGroutTitle": "Removing the group",
+    "groupPath": "Path"
+  },
+  "task": {
+    "noTask": "No task",
+    "ongoingTask": "ONGOING",
+    "completedTask": "COMPLETED",
+    "placeholderTask": "Enter the task text",
+    "closedTask": "Closed"
+  },
+  "auth": {
+    "authorisationTitle": "Authorization in the system",
+    "login": "Login",
+    "password": "Password"
+  },
+  "modal": {
+    "removeTask": "Are you sure you want to delete the task \"{recordName}\" from the Task Group \"{storageName}\"?",
+    "editingGroupTitle": "Editing the group \"{name}\"",
+    "removeGroupTitle": "Deleting the \"{storageName}\" Task Group\"",
+    "removeGroup": "You really want to delete the Task Group \"{storageName}\""
+  }
+}

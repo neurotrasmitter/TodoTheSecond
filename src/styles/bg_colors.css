@@ -2,28 +2,25 @@
     background-color: #F7F7F7;
 }
 
-.bg-red-light {
-    background-color: #F57089;
-}
 
 .bg-red {
     background-color: #F35A76;
 }
-
-.bg-red-dark {
+.bg-red:hover {
     background-color: #F24665;
 }
-
-.bg-primary-light {
-    background-color: #99A3F0;
+.bg-red:disabled {
+    background-color: #F57089;
 }
 
 .bg-primary {
     background-color: #5768E6;
 }
-
-.bg-primary-dark {
+.bg-primary:hover {
     background-color: #4053E3;
+}
+.bg-primary:disabled {
+    background-color: #99A3F0;
 }
 
 .bg-black {

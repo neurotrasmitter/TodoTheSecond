@@ -5,26 +5,42 @@
         <CrossIcon />
       </button>
       <div class="header header-1" v-if="isEdit">
-        Редактирование группы {{ name }}
+        {{ $t("modal.editingGroupTitle", { name }) }}
       </div>
-      <div class="header header-1" v-else>Добавить группу</div>
-      <div class="group-name-text text-18">Название группы</div>
-      <input class="input new-task-form" type="text" v-model="groupName" />
-      <div class="group-path-text text-18">Путь</div>
-      <input class="input new-task-form" type="text" v-model="groupPath" />
+      <div class="header header-1" v-else>
+        {{ $t("group.addNewGroup") }}
+      </div>
+      <LabelInputForm
+        v-model="groupName"
+        :label="$t('group.groutName')"
+        id="group-name"
+        :error-text="groupNameErrorText"
+        class="group-name-text"
+        @enter="confirmMethod"
+      />
+      <LabelInputForm
+        v-model="groupPath"
+        :label="$t('group.groupPath')"
+        id="path-name"
+        :error-text="groupPathErrorText"
+        class="group-path-text"
+        @enter="confirmMethod"
+      />
       <button
         class="button-confirm long-button bg-primary white"
         @click="confirmMethod"
+        :disabled="!isCorrect"
         v-if="isEdit"
       >
-        Редактировать
+        {{ $t("action.changeAction") }}
       </button>
       <button
         class="button-confirm long-button bg-primary white"
         @click="confirmMethod"
+        :disabled="!isCorrect"
         v-else
       >
-        Добавить
+        {{ $t("action.addAction") }}
       </button>
     </div>
   </div>
@@ -32,9 +48,13 @@
 
 <script>
 import CrossIcon from "@/components/icons/CrossIcon";
+import LabelInputForm from "@/components/LabelInputForm.vue";
+import { mapState } from "vuex";
+import doesTheGroupNameNotExist from "@/helpers/doesTheGroupNameNotExist";
+import doesTheGroupPathNotExist from "@/helpers/doesTheGroupPathNotExist";
 export default {
   name: "GroupWorkingModal",
-  components: { CrossIcon },
+  components: { LabelInputForm, CrossIcon },
   props: {
     name: {
       type: String,
@@ -60,13 +80,45 @@ export default {
   },
   methods: {
     confirmMethod() {
-      this.$emit("confirm-method", {
-        name: this.groupName,
-        path: this.groupPath,
-      });
+      console.log(this.isCorrect);
+      if (this.isCorrect) {
+        this.$emit("confirm-method", {
+          name: this.groupName,
+          newPath: this.groupPath,
+          oldPath: this.path,
+        });
+      }
     },
     closeModal() {
       this.$emit("close-method");
+    },
+  },
+  computed: {
+    ...mapState(["groups"]),
+    groupNameErrorText() {
+      if (!this.groupName.length) {
+        return this.$t("error.groupNameIsEmpty");
+      } else if (this.isEdit && this.groupName === this.name) {
+        return "";
+      } else if (!doesTheGroupNameNotExist(this.groups, this.groupName)) {
+        return "*Имя группы уже существует";
+      } else {
+        return "";
+      }
+    },
+    groupPathErrorText() {
+      if (!this.groupPath.length) {
+        return this.$t("error.groupPathIsEmpty");
+      } else if (this.isEdit && this.groupPath === this.path) {
+        return "";
+      } else if (!doesTheGroupPathNotExist(this.groups, this.groupPath)) {
+        return "*Путь группы уже существует";
+      } else {
+        return "";
+      }
+    },
+    isCorrect() {
+      return !this.groupNameErrorText && !this.groupPathErrorText;
     },
   },
 };
@@ -102,19 +154,12 @@ export default {
 }
 
 .group-name-text {
-  margin-top: 24px;
+  margin-top: 51px;
   margin-left: 32px;
 }
 .group-path-text {
-  margin-top: 16px;
+  margin-top: 43px;
   margin-left: 32px;
-}
-.input {
-  margin-top: 8px;
-  margin-left: 32px;
-  margin-right: 32px;
-  min-height: 48px;
-  min-width: 536px;
 }
 .button-confirm {
   margin-top: 32px;
